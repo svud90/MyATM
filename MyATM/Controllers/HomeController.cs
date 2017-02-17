@@ -26,5 +26,14 @@ namespace MyATM.Controllers
 
             return View();
         }
+        public ActionResult Serial(string letterCase)
+        {
+            var serial = "ASPNETMVCATM1";
+            if (letterCase == "lower")
+            {
+                return Content(serial.ToLower());
+            }
+            return Content(serial);
+        }
     }
 }
