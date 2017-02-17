@@ -38,6 +38,8 @@ namespace MyATM.Models
         public decimal Balance { get; set; }
 
         public virtual ApplicationUser User { get; set; }
+
+        [Required]
         public string ApplicationUserId { get; set; }
     }
 }

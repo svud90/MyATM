@@ -9,7 +9,7 @@ namespace MyATM.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
             ContextKey = "MyATM.Models.ApplicationDbContext";
         }
 
