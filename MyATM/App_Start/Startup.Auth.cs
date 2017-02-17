@@ -54,9 +54,9 @@ namespace MyATM
             //   consumerKey: "",
             //   consumerSecret: "");
 
-            //app.UseFacebookAuthentication(
-            //   appId: "",
-            //   appSecret: "");
+            app.UseFacebookAuthentication(
+               appId: "247263202388204",
+               appSecret: "c2c5e88b5b54a8196046988c2abd65f3");
 
             //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             //{
