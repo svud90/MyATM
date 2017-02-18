@@ -20,10 +20,6 @@ namespace MyATM.Controllers
 
             return View();
         }
-        public ActionResult Foo()
-        {
-            return View("About");
-        }
 
         public ActionResult Contact()
         {
