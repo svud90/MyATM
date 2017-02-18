@@ -33,8 +33,10 @@
 <div id="replySection">
     <h3>@ViewBag.TheMessage</h3>
     <form method="post" id="contactForm">
-        <textarea name="message" id="message"></textarea>
+        <textarea name="message" id="message" maxlength="200" data-bind="value:message, valueUpdate:'input'"></textarea>
         <br />
+        <span data-bind="text:charactersRemaining"> </span> characters remaining
+        <br/>
         <input type="submit" value="Send" />
         <img src="~/Content/Images/loading_blue2.gif" id="progress" style="display:none" />
     </form>
@@ -42,6 +44,17 @@
 </div>
 
 @section scripts{
+<script src="~/Scripts/knockout-3.4.1.js"></script>
+    <script>
+        function ContactViewModel() {
+            var self = this;
+            self.message = ko.observable('');
+            self.charactersRemaining = ko.computed(function () {
+                return 200 - self.message().length;
+            })
+        }
+        ko.applyBindings(new ContactViewModel());
+    </script>
     <script>
         $(function () {
             $('#contactForm').submit(function () {
