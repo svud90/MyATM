@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using MyATM.Models;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace MyATM.Controllers
 {
@@ -16,6 +17,11 @@ namespace MyATM.Controllers
         [Authorize]
         public ActionResult Deposit()
         {
+            var applicationUserId = User.Identity.GetUserId();
+            //var Pin = db.Users.Where(x => x.Id == applicationUserId).First().PIN;
+            //var manager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            //var user = manager.FindById(applicationUserId);
+            //ViewBag.Pin = user.PIN;
             return View();
         }
 
@@ -29,6 +35,8 @@ namespace MyATM.Controllers
             {
                 var applicationUserId = User.Identity.GetUserId();
                 transaction.CheckingAccountId = db.CheckingAccounts.FirstOrDefault(x => x.ApplicationUserId == applicationUserId).Id;
+                var Pin = db.Users.FirstOrDefault(x => x.Id == applicationUserId).PIN;
+                ViewBag.Pin = Pin;
                 db.Transactions.Add(transaction);
                 db.SaveChanges();
 

@@ -16,6 +16,7 @@ namespace MyATM.Models
             // Add custom user claims here
             return userIdentity;
         }
+        public string PIN { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
