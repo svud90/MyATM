@@ -16,9 +16,9 @@
     <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
 </address>
 
-<div id="replySection">
+@*<div id="replySection">
     <h3>@ViewBag.TheMessage</h3>
-    @using (Ajax.BeginForm(new AjaxOptions { HttpMethod = "post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "replySection", LoadingElementDuration = 1000 }))
+    @using (Ajax.BeginForm(new AjaxOptions { HttpMethod = "post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "replySection", LoadingElementDuration = 2000 }))
     {
         <textarea name="message"></textarea>
         <br />
@@ -29,4 +29,28 @@
 
 @section scripts{
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+}*@
+<div id="replySection">
+    <h3>@ViewBag.TheMessage</h3>
+    <form method="post" id="contactForm">
+        <textarea name="message" id="message"></textarea>
+        <br />
+        <input type="submit" value="Send" />
+        <img src="~/Content/Images/loading_blue2.gif" id="progress" style="display:none" />
+    </form>
+
+</div>
+
+@section scripts{
+    <script>
+        $(function () {
+            $('#contactForm').submit(function () {
+                $('#progress').show();
+                $.post('', { message: $('#message').val() }).done(function (response) {
+                    setTimeout(function () { $('#replySection').html(response); }, 2000);
+                });
+                return false;
+            });
+        });
+    </script>
 }
