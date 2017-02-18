@@ -33,10 +33,11 @@ namespace MyATM.Controllers
         {
             if (ModelState.IsValid)
             {
-                var applicationUserId = User.Identity.GetUserId();
-                transaction.CheckingAccountId = db.CheckingAccounts.FirstOrDefault(x => x.ApplicationUserId == applicationUserId).Id;
-                var Pin = db.Users.FirstOrDefault(x => x.Id == applicationUserId).PIN;
-                ViewBag.Pin = Pin;
+                //var applicationUserId = User.Identity.GetUserId();
+                //transaction.CheckingAccountId = db.CheckingAccounts.FirstOrDefault(x => x.ApplicationUserId == applicationUserId).Id;
+                //var Pin = db.Users.FirstOrDefault(x => x.Id == applicationUserId).PIN;
+                //ViewBag.Pin = Pin;
+
                 db.Transactions.Add(transaction);
                 db.SaveChanges();
 
