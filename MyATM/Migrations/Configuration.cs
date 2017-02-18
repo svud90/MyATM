@@ -1,5 +1,8 @@
 namespace MyATM.Migrations
 {
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
+    using MyATM.Models;
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
@@ -15,6 +18,14 @@ namespace MyATM.Migrations
 
         protected override void Seed(MyATM.Models.ApplicationDbContext context)
         {
+            var userStore = new UserStore<ApplicationUser>(context);
+            var userManager = new UserManager<ApplicationUser>(userStore);
+
+            var admin = context.Users.FirstOrDefault(x=>x.UserName == "abc@y.m.com");
+            context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Admin" });
+            context.SaveChanges();
+
+            userManager.AddToRole(admin.Id, "Admin");
             //  This method will be called after migrating to the latest version.
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 

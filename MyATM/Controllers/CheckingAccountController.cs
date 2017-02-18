@@ -3,21 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
+using MyATM.Models;
 
 namespace MyATM.Controllers
 {
+    [Authorize]
     public class CheckingAccountController : Controller
     {
+        private ApplicationDbContext db = new ApplicationDbContext();
         // GET: CheckingAccount
         public ActionResult Index()
         {
             return View();
         }
 
-        // GET: CheckingAccount/Details/5
+        // GET: CheckingAccount/Details
         public ActionResult Details()
         {
-            return View();
+            var userId = User.Identity.GetUserId();
+            var checkingAccount = db.CheckingAccounts.FirstOrDefault(x => x.ApplicationUserId == userId);
+            return View(checkingAccount);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult DetailsForAdmin(int id)
+        {
+            var checkingAccount = db.CheckingAccounts.Find(id);
+            return View("Details",checkingAccount);
+        }
+        [Authorize(Roles = "Admin")]
+        public ActionResult ListAllAccounts()
+        {
+            return View(db.CheckingAccounts.ToArray());
         }
 
         // GET: CheckingAccount/Create
