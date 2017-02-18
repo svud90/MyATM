@@ -24,12 +24,19 @@ namespace MyATM.Controllers
         {
             return View("About");
         }
-
+        [HttpGet]
         public ActionResult Contact()
         {
             ViewBag.Message = "Your contact page.";
-
+            ViewBag.TheMessage = "Having problem? Let us know.";
             return View();
+        }
+        [HttpPost]
+        public ActionResult Contact(string messageFormUser)
+        {
+            ViewBag.TheMessage = "Thank you. We receive your message!";
+
+            return PartialView("_ContactThanks");
         }
         public ActionResult Serial(string letterCase)
         {
