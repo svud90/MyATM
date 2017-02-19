@@ -4,30 +4,8 @@
     ViewBag.Title = "Successful Transaction";
 }
 
-<h2>Successful Transaction</h2>
 
-<div>
-    <h4>Transaction</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Amount)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Amount)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-    </dl>
-</div>
+@Html.Partial("_SuccessfulTransaction")
 <div class="text-center">
     <a href="@Url.Action("Index","Home")" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-home"></span> Home</a>
 </div>

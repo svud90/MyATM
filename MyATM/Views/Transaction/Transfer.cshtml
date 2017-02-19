@@ -1,16 +1,17 @@
-﻿@model MyATM.Models.Transaction
+﻿@model MyATM.Models.TransferTransaction
 
 @{
-    ViewBag.Title = "Deposit";
+    ViewBag.Title = "Transfer";
 }
 <div id="replySection">
-    <h2>Deposit</h2>
-    @using (Html.BeginForm("Deposit", "Transaction", FormMethod.Post, new { id = "depositForm" }))
+    <h2>Transfer</h2>
+
+    @using (Html.BeginForm("Transfer", "Transaction", FormMethod.Post, new { id = "transferForm" }))
     {
         @Html.AntiForgeryToken()
 
         <div class="form-horizontal">
-            <h4>Transaction</h4>
+            <h4>Transfer Transaction</h4>
             <hr />
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             <div class="form-group">
@@ -22,8 +23,16 @@
             </div>
 
             <div class="form-group">
+                @Html.LabelFor(model => model.RecievingCheckingAccountNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.RecievingCheckingAccountNumber, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.RecievingCheckingAccountNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input id="depositButton" type="submit" value="Deposit" class="btn btn-default" />
+                    <input id="transferButton" type="submit" value="Transfer" class="btn btn-default" />
                     <img src="~/Content/Images/loading_blue2.gif" id="progress" style="display:none" />
                 </div>
             </div>
@@ -34,16 +43,15 @@
     <a href="@Url.Action("Index","Home")" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-home"></span> Home</a>
 </div>
 
-
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 
     <script>
-            $(document).on('submit','#depositForm', function () {
+            $(document).on('submit','#transferForm', function () {
                 var $theForm = $(this);
                 if ($theForm.valid()) {
                     $('#progress').show();
-                    $('#depositButton').prop("disabled", true);
+                    $('#transferButton').prop("disabled", true);
                     $.post('', $theForm.serialize()).done(function (response) {
                         setTimeout(function () { $('#replySection').html(response); }, 1000);
                     });

@@ -44,7 +44,7 @@ namespace MyATM.Controllers
                 db.Transactions.Add(transaction);
                 db.SaveChanges();
 
-                return View("SuccessfulTransaction", transaction);
+                return PartialView("_SuccessfulTransaction", transaction);
 
             }
             return View();
@@ -54,11 +54,6 @@ namespace MyATM.Controllers
         public ActionResult Withdrawal()
         {
             return View();
-        }
-
-        private ActionResult SuccessfulTransaction(Transaction transaction)
-        {
-            return View(transaction);
         }
 
         [HttpPost]
@@ -83,7 +78,7 @@ namespace MyATM.Controllers
                 db.SaveChanges();
 
                 transaction.Amount = -transaction.Amount;
-                return View("SuccessfulTransaction", transaction);
+                return PartialView("_SuccessfulTransaction", transaction);
 
             }
             return View();
@@ -116,5 +111,38 @@ namespace MyATM.Controllers
             return View("Withdrawal");
         }
 
+        [HttpGet]
+        public ActionResult Transfer()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult Transfer(TransferTransaction transferTransaction)
+        {
+            var applicationUserId = User.Identity.GetUserId();
+            var checkingAccount = db.CheckingAccounts.FirstOrDefault(x => x.ApplicationUserId == applicationUserId);
+            if (checkingAccount.Balance < transferTransaction.Amount)
+                ModelState.AddModelError("Amount", "Insufficient!");
+            if (ModelState.IsValid)
+            {
+                var transaction = new Transaction();
+                transaction.CheckingAccountId = checkingAccount.Id;
+                transaction.Amount = -transferTransaction.Amount;
+                transaction.Description = DateTime.Now.ToString("G") + ": Transfer to Account #"+ transferTransaction.RecievingCheckingAccountNumber ;
+
+                checkingAccount.Balance += transaction.Amount;
+
+                db.Transactions.Add(transaction);
+                db.SaveChanges();
+
+                transaction.Amount = -transaction.Amount;
+                return PartialView("_SuccessfulTransaction", transaction);
+
+            }
+            return View();
+        }
     }
 }
