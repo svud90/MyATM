@@ -1,11 +1,15 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
-
 <div class="row">
     <div class="col-md-6 margin-top-20">
         <a href="@Url.Action("Withdrawal","Transaction")" class="btn btn-primary btn-lg btn-block"><span class="glyphicon glyphicon-circle-arrow-down"></span> Withdrawal</a>
-        <a href="@Url.Action("QuickCash100", "Transaction")" class="btn btn-primary btn-lg btn-block"><span class="glyphicon glyphicon-flash"></span> Quick Cash $100</a>
+        <a href="javascript: $('#quickCash100').submit()" class="btn btn-primary btn-lg btn-block">
+                <span class="glyphicon glyphicon-flash"></span> Quick Cash $100
+            @using (Html.BeginForm("QuickCash100", "Transaction", FormMethod.Post, new { id = "quickCash100" }))
+            {@Html.AntiForgeryToken()}
+        </a>
+       
         <a href="@Url.Action("Details","CheckingAccount")" class="btn btn-primary btn-lg btn-block"><span class="glyphicon glyphicon-question-sign"></span> Balance Inquiry</a>
     </div>
     <div class="col-md-6 margin-top-20">

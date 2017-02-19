@@ -21,7 +21,7 @@ namespace MyATM.Controllers
         {
             var applicationUserId = User.Identity.GetUserId();
             var checkingAccount = db.CheckingAccounts.FirstOrDefault(x=>x.ApplicationUserId == applicationUserId);
-            return View(checkingAccount.Transactions.ToArray());
+            return View(checkingAccount.Transactions.OrderByDescending(x=>x.Id).ToArray());
 
         }
         // GET: CheckingAccount/Details

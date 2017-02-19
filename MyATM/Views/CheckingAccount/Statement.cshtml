@@ -11,20 +11,24 @@
         <tr>
             <td><strong>Transaction ID</strong></td>
             <td><strong>Amount</strong></td>
+            <td><strong>Description</strong></td>
         </tr>
     </thead>
     <tbody data-bind="foreach:currentTransactions">
         <tr>
             <td data-bind="text:Id"></td>
-            <td data-bind="text:formattedPrice(Amount)"></td>            
+            <td data-bind="text:formattedPrice(Amount)"></td> 
+            <td data-bind="text:Description"></td>           
         </tr>
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="2">Page 
-                <span data-bind="click:previousPage,visible:currentPage() > 1" class="glyphicon glyphicon-circle-arrow-left" style="cursor:pointer;"></span>
-                <span data-bind="text:currentPage"></span>
-                <span data-bind="click:nextPage,visible:currentPage() < lastPage" class="glyphicon glyphicon-circle-arrow-right" style="cursor:pointer;"></span>
+            <td colspan="3"> 
+                <div class="center-block text-center">
+                    <span data-bind="click:previousPage,visible:currentPage() > 1" class="glyphicon glyphicon-circle-arrow-left" style="cursor:pointer;"></span>
+                    <strong>Page:</strong><span data-bind="text:currentPage"></span>
+                    <span data-bind="click:nextPage,visible:currentPage() < lastPage" class="glyphicon glyphicon-circle-arrow-right" style="cursor:pointer;"></span>
+                </div>
             </td>
         </tr>
     </tfoot>

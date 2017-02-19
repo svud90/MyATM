@@ -38,12 +38,13 @@ namespace MyATM.Controllers
                 var checkingAccount = db.CheckingAccounts.FirstOrDefault(x => x.ApplicationUserId == applicationUserId);
 
                 transaction.CheckingAccountId = checkingAccount.Id;
+                transaction.Description = DateTime.Now.ToString("G") + ": Deposit";
                 checkingAccount.Balance += transaction.Amount;
 
                 db.Transactions.Add(transaction);
                 db.SaveChanges();
 
-                return RedirectToAction("Index", "Home");
+                return View("SuccessfulTransaction", transaction);
 
             }
             return View();
@@ -55,10 +56,9 @@ namespace MyATM.Controllers
             return View();
         }
 
-        [HttpGet]
-        public ActionResult QuickCash100()
+        private ActionResult SuccessfulTransaction(Transaction transaction)
         {
-            return View();
+            return View(transaction);
         }
 
         [HttpPost]
@@ -75,13 +75,15 @@ namespace MyATM.Controllers
 
                 transaction.CheckingAccountId = checkingAccount.Id;
                 transaction.Amount = -transaction.Amount;
+                transaction.Description = DateTime.Now.ToString("G") + ": Withdrawal";
 
                 checkingAccount.Balance += transaction.Amount;
 
                 db.Transactions.Add(transaction);
                 db.SaveChanges();
 
-                return RedirectToAction("Index", "Home");
+                transaction.Amount = -transaction.Amount;
+                return View("SuccessfulTransaction", transaction);
 
             }
             return View();
@@ -89,27 +91,29 @@ namespace MyATM.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public ActionResult QuickCash100(int i)
+        public ActionResult QuickCash100()
         {
             var applicationUserId = User.Identity.GetUserId();
             var checkingAccount = db.CheckingAccounts.FirstOrDefault(x => x.ApplicationUserId == applicationUserId);
             if (checkingAccount.Balance < 100)
-                ModelState.AddModelError("", "Insufficient!");
+                ModelState.AddModelError("Amount", "Insufficient!");
             if (ModelState.IsValid)
             {
                 var transaction = new Transaction();
                 transaction.CheckingAccountId = checkingAccount.Id;
                 transaction.Amount = -100;
+                transaction.Description = DateTime.Now.ToString("G") + ": Withdrawal";
 
                 checkingAccount.Balance += transaction.Amount;
 
                 db.Transactions.Add(transaction);
                 db.SaveChanges();
 
-                return RedirectToAction("Index", "Home");
+                transaction.Amount = 100;
+                return View("SuccessfulTransaction", transaction);
 
             }
-            return View();
+            return View("Withdrawal");
         }
 
     }

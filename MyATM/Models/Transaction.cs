@@ -15,9 +15,13 @@ namespace MyATM.Models
         [DataType(DataType.Currency)]
         public decimal Amount { get; set; }
 
+        public string Description { get; set; }
+
         [Required]
         public int CheckingAccountId { get; set; }
         public virtual CheckingAccount CheckingAccount { get; set; }
+
+
     }
         
 }
