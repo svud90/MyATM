@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 
 namespace MyATM.Controllers
 {
+    [Authorize]
     public class TransactionController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -34,7 +35,10 @@ namespace MyATM.Controllers
             if (ModelState.IsValid)
             {
                 var applicationUserId = User.Identity.GetUserId();
-                transaction.CheckingAccountId = db.CheckingAccounts.FirstOrDefault(x => x.ApplicationUserId == applicationUserId).Id;
+                var checkingAccount = db.CheckingAccounts.FirstOrDefault(x => x.ApplicationUserId == applicationUserId);
+
+                transaction.CheckingAccountId = checkingAccount.Id;
+                checkingAccount.Balance += transaction.Amount;
 
                 db.Transactions.Add(transaction);
                 db.SaveChanges();
@@ -45,15 +49,59 @@ namespace MyATM.Controllers
             return View();
         }
 
+        [HttpGet]
+        public ActionResult Withdrawal()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult QuickCash100()
+        {
+            return View();
+        }
+
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
         public ActionResult Withdrawal(Transaction transaction)
         {
+            var applicationUserId = User.Identity.GetUserId();
+            var checkingAccount = db.CheckingAccounts.FirstOrDefault(x => x.ApplicationUserId == applicationUserId);
+            if (checkingAccount.Balance < transaction.Amount)
+                ModelState.AddModelError("Amount", "Insufficient!");
             if (ModelState.IsValid)
             {
-                var applicationUserId = User.Identity.GetUserId();
-                transaction.CheckingAccountId = db.CheckingAccounts.FirstOrDefault(x => x.ApplicationUserId == applicationUserId).Id;
+
+                transaction.CheckingAccountId = checkingAccount.Id;
+                transaction.Amount = -transaction.Amount;
+
+                checkingAccount.Balance += transaction.Amount;
+
+                db.Transactions.Add(transaction);
+                db.SaveChanges();
+
+                return RedirectToAction("Index", "Home");
+
+            }
+            return View();
+        }
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult QuickCash100(int i)
+        {
+            var applicationUserId = User.Identity.GetUserId();
+            var checkingAccount = db.CheckingAccounts.FirstOrDefault(x => x.ApplicationUserId == applicationUserId);
+            if (checkingAccount.Balance < 100)
+                ModelState.AddModelError("", "Insufficient!");
+            if (ModelState.IsValid)
+            {
+                var transaction = new Transaction();
+                transaction.CheckingAccountId = checkingAccount.Id;
+                transaction.Amount = -100;
+
+                checkingAccount.Balance += transaction.Amount;
 
                 db.Transactions.Add(transaction);
                 db.SaveChanges();

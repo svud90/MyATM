@@ -60,7 +60,7 @@
             $('#contactForm').submit(function () {
                 $('#progress').show();
                 $.post('', { message: $('#message').val() }).done(function (response) {
-                    setTimeout(function () { $('#replySection').html(response); }, 2000);
+                    setTimeout(function () { $('#replySection').html(response); }, 1000);
                 });
                 return false;
             });
