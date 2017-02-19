@@ -17,7 +17,13 @@ namespace MyATM.Controllers
         {
             return View();
         }
+        public ActionResult Statement()
+        {
+            var applicationUserId = User.Identity.GetUserId();
+            var checkingAccount = db.CheckingAccounts.FirstOrDefault(x=>x.ApplicationUserId == applicationUserId);
+            return View(checkingAccount.Transactions.ToArray());
 
+        }
         // GET: CheckingAccount/Details
         public ActionResult Details()
         {
