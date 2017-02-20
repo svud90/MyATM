@@ -2,68 +2,112 @@
     ViewBag.Title = "Contact";
 }
 <h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
+<div class="row">
+    <div class="col-md-6 margin-top-20">
+        <h3>@ViewBag.Message</h3>
 
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
+        <address>
+            One Microsoft Way<br />
+            Redmond, WA 98052-6399<br />
+            <abbr title="Phone">P:</abbr>
+            425.555.0100
+        </address>
 
-<address>
-    <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>
+        <address>
+            <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
+            <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
+        </address>
 
-@*<div id="replySection">
-    <h3>@ViewBag.TheMessage</h3>
-    @using (Ajax.BeginForm(new AjaxOptions { HttpMethod = "post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "replySection", LoadingElementDuration = 2000 }))
-    {
-        <textarea name="message"></textarea>
-        <br />
-        <input type="submit" value="Send" />
-    }
+        @*<div id="replySection">
+                <h3>@ViewBag.TheMessage</h3>
+                @using (Ajax.BeginForm(new AjaxOptions { HttpMethod = "post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "replySection", LoadingElementDuration = 2000 }))
+                {
+                    <textarea name="message"></textarea>
+                    <br />
+                    <input type="submit" value="Send" />
+                }
 
-</div>
+            </div>
 
-@section scripts{
-    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-}*@
-<div id="replySection">
-    <h3>@ViewBag.TheMessage</h3>
-    <form method="post" id="contactForm">
-        <textarea name="message" id="message" maxlength="200" data-bind="value:message, valueUpdate:'input'"></textarea>
-        <br />
-        <span data-bind="text:charactersRemaining"> </span> characters remaining
-        <br/>
-        <input type="submit" value="Send" />
-        <img src="~/Content/Images/loading_blue2.gif" id="progress" style="display:none" />
-    </form>
+            @section scripts{
+                <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+            }*@
+        <div id="replySection">
+            <h3>@ViewBag.TheMessage</h3>
+            <form method="post" id="contactForm">
+                <textarea name="message" id="message" maxlength="200" data-bind="value:message, valueUpdate:'input'"></textarea>
+                <br />
+                <span data-bind="text:charactersRemaining"> </span> characters remaining
+                <br />
+                <input type="submit" value="Send" />
+                <img src="~/Content/Images/loading_blue2.gif" id="progress" style="display:none" />
+            </form>
 
-</div>
-
-@section scripts{
-<script src="~/Scripts/knockout-3.4.1.js"></script>
-    <script>
-        function ContactViewModel() {
-            var self = this;
-            self.message = ko.observable('');
-            self.charactersRemaining = ko.computed(function () {
-                return 200 - self.message().length;
-            })
+        </div>
+    </div>
+    <div class="col-md-6 margin-top-20">
+        <h3>Live Help</h3>
+        @if (Request.IsAuthenticated)
+        {
+            <div class="text-left">
+                <div id="chatContext" style="height:150px;overflow-y:auto;"></div>
+                <div>
+                    <input type="text" id="liveChatMessage"/>
+                    <input type="button" id="liveChatSendButton" value="Send"/>
+                </div>
+            </div>
         }
-        ko.applyBindings(new ContactViewModel());
-    </script>
-    <script>
-        $(function () {
-            $('#contactForm').submit(function () {
-                $('#progress').show();
-                $.post('', { message: $('#message').val() }).done(function (response) {
-                    setTimeout(function () { $('#replySection').html(response); }, 1000);
+        else
+        {
+            <h4>Please log in to activate this service</h4>
+            <div class="text-center">
+                <a href="@Url.Action("Login","Account")" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-lock"></span> Login</a>
+            </div>
+        }
+
+    </div>
+</div>
+        @section scripts{
+            <script src="~/Scripts/knockout-3.4.1.js"></script>
+            <script src="~/Scripts/jquery.signalR-2.2.1.min.js"></script>
+            <script src="~/signalr/hubs"></script>
+            <script>
+                var liveHelp = $.connection.liveHelpHub;
+                liveHelp.client.showMessage = function (username,message) {
+                    $('#chatContext').append('<strong>' + username + ':</strong>' + message + '<br/>');
+                    $('#chatContext').scrollTop($('#chatContext')[0].scrollHeight);
+                };
+                $.connection.hub.start().done(function () {
+                    $('#liveChatSendButton').click(function () {
+                        if ($('#liveChatMessage').val() != '') {
+                            liveHelp.server.sendMessage($('#liveChatMessage').val());
+                            $('#liveChatMessage').val('');
+                        }
+                    });
                 });
-                return false;
-            });
-        });
-    </script>
-}
+            </script>
+
+            <script>
+                function ContactViewModel() {
+                    var self = this;
+                    self.message = ko.observable('');
+                    self.charactersRemaining = ko.computed(function () {
+                        return 200 - self.message().length;
+                    })
+                }
+                ko.applyBindings(new ContactViewModel());
+            </script>
+            <script>
+                $(function () {
+                    $('#contactForm').submit(function () {
+                        if ($('#message').val() != '') {
+                            $('#progress').show();
+                            $.post('', { message: $('#message').val() }).done(function (response) {
+                                setTimeout(function () { $('#replySection').html(response); }, 1000);
+                            });
+                        }
+                        return false
+                    });
+                });
+            </script>
+        }
